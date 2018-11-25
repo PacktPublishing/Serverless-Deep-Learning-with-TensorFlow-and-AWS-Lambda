@@ -1,0 +1,53 @@
+service: HelloWorldSQS
+
+frameworkVersion: ">=1.2.0 <2.0.0"
+
+provider:
+  name: aws
+  region: us-east-1
+  runtime: python3.6
+  memorySize: 128
+  timeout: 10
+  iamRoleStatements:
+    -  Effect: "Allow"
+       Action:
+         - "sqs:ReceiveMessage"
+         - "sqs:DeleteMessage"
+         - "sqs:GetQueueAttributes"
+       Resource:
+         - arn:aws:sqs:#{AWS::Region}:#{AWS::AccountId}:ReadSQS
+    -  Effect: "Allow"
+       Action:
+         - "sqs:SendMessage"
+         - "sqs:GetQueueUrl"
+       Resource:
+         - arn:aws:sqs:#{AWS::Region}:#{AWS::AccountId}:WriteSQS
+
+functions:
+  main:
+    handler: index.handler
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - ReadSQS
+              - Arn
+
+package:
+  exclude:
+    - node_modules/**
+
+resources:
+  Resources:  
+    WriteSQS:   
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: "WriteSQS"
+    ReadSQS:   
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: "ReadSQS"
+
+plugins:
+  - serverless-pseudo-parameters
+  

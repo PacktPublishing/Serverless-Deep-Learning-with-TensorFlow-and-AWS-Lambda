@@ -1,0 +1,17 @@
+service: HelloWorldAPI
+
+frameworkVersion: ">=1.2.0 <2.0.0"
+
+provider:
+  name: aws
+  region: us-east-1
+  runtime: python3.6
+  memorySize: 128
+  timeout: 10
+         
+
+functions:
+  main:
+    handler: index.handler
+    events:
+      - http: GET hello

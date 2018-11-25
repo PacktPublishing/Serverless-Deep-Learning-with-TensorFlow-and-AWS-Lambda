@@ -1,0 +1,25 @@
+service: deeplearninglambda
+
+frameworkVersion: ">=1.2.0 <2.0.0"
+
+provider:
+  name: aws
+  region: us-east-1
+  runtime: python3.6
+  memorySize: 1536
+  timeout: 60
+  iamRoleStatements:
+    -  Effect: "Allow"
+       Action:
+         - "s3:ListBucket"
+       Resource:
+         - arn:aws:s3:::serverlessdeeplearning
+    -  Effect: "Allow"
+       Action:
+         - "s3:GetObject"
+       Resource:
+         - arn:aws:s3:::serverlessdeeplearning/*         
+
+functions:
+  main:
+    handler: index.handler
